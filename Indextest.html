@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>soyjaking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=VT323&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #d6daf0;
+      --bg-post:   #f0e0d6;
+      --bg-header: #ea8;
+      --border:    #b7c5d9;
+      --border-dark: #89a;
+      --text:      #000;
+      --text-muted:#666;
+      --link:      #34345c;
+      --link-hover:#d00;
+      --accent:    #800000;
+      --btn-bg:    #d9bfb7;
+      --btn-border:#b06060;
+      --tag-bg:    #f0e0d6;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier Prime', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a { color: var(--link); text-decoration: underline; }
+    a:hover { color: var(--link-hover); }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    #site-header {
+      background: var(--bg-header);
+      border-bottom: 3px solid var(--border-dark);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    #site-header .brand {
+      font-family: 'VT323', monospace;
+      font-size: 28px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-decoration: none;
+    }
+
+    #site-header nav {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    #site-header nav a {
+      margin-left: 10px;
+      font-size: 12px;
+    }
+
+    /* ── Page wrapper ─────────────────────────────────────────── */
+    .page {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 12px;
+    }
+
+    /* ── Thread / Post container style ───────────────────────── */
+    .board-post {
+      background: var(--bg-post);
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+      padding: 0;
+    }
+
+    .post-header {
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-dark);
+      padding: 4px 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .post-header .subject {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    .post-header .postnum {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .post-header .tag {
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      padding: 0 5px;
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    .post-body {
+      padding: 12px;
+    }
+
+    /* ── Photo Gallery ────────────────────────────────────────── */
+    .gallery {
+      position: relative;
+      width: min(500px, 100%);
+      height: 500px;
+      max-height: 500px;
+      margin: 0 auto 16px auto;
+      border: 2px solid var(--border-dark);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .gallery-slides {
+      display: flex;
+      transition: transform 0.3s ease;
+      height: 100%;
+    }
+
+    .gallery-slide {
+      min-width: 100%;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: #888;
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+    }
+
+    .gallery-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-slide.placeholder::after {
+      content: attr(data-label);
+    }
+
+    .gallery-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border: 1px solid #555;
+      padding: 6px 11px;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      z-index: 2;
+      user-select: none;
+    }
+    .gallery-btn:hover { background: rgba(180,0,0,0.7); }
+    .gallery-btn.prev { left: 0; }
+    .gallery-btn.next { right: 0; }
+
+    .gallery-counter {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-family: 'Courier Prime', monospace;
+    }
+
+    /* ── Price & Buy ──────────────────────────────────────────── */
+    .buy-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .price {
+      font-family: 'VT323', monospace;
+      font-size: 32px;
+      color: var(--accent);
+    }
+
+    .buy-btn {
+      background: var(--btn-bg);
+      border: 2px solid var(--btn-border);
+      color: var(--accent);
+      font-family: 'Courier Prime', monospace;
+      font-weight: bold;
+      font-size: 13px;
+      padding: 7px 22px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 1px;
+      transition: background 0.15s;
+    }
+    .buy-btn:hover {
+      background: var(--btn-border);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .stock-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Divider ──────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px dashed var(--border-dark);
+      margin: 14px 0;
+    }
+
+    /* ── Specs table ──────────────────────────────────────────── */
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .specs-table td {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .specs-table td:first-child {
+      background: var(--bg);
+      font-weight: bold;
+      white-space: nowrap;
+      width: 35%;
+      color: var(--accent);
+    }
+
+    /* ── FAQ ──────────────────────────────────────────────────── */
+    .faq-item {
+      margin-bottom: 10px;
+    }
+
+    .faq-item .q {
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .faq-item .q::before { content: "Q: "; }
+    .faq-item .a::before { content: "A: "; color: var(--text-muted); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    #site-footer {
+      border-top: 3px solid var(--border-dark);
+      background: var(--bg-header);
+      text-align: center;
+      padding: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 30px;
+    }
+
+    /* ── Greentext style ──────────────────────────────────────── */
+    .green { color: #789922; }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 500px) {
+      .gallery { max-width: 100%; }
+      .buy-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ─────────────────────────────────────────────── -->
+  <header id="site-header">
+    <a class="brand" href="#">soychan</a>
+    <nav>
+  </header>
+
+  <!-- ── MAIN CONTENT ───────────────────────────────────────── -->
+  <main class="page">
+
+    <!-- PRODUCT GALLERY + BUY -->
+    <section id="product" class="board-post">
+      <div class="post-header">
+        <span class="subject">Chudjak plushie</span>
+        <span class="postnum">#0001</span>
+        <span class="tag">LIMITED SUPPLY</span>
+      </div>
+      <div class="post-body">
+
+        <!-- Gallery -->
+        <div class="gallery" id="gallery">
+          <div class="gallery-slides" id="gallery-slides">
+<div class="gallery-slide"><img src="Finished Photos/chudjakphoto1.png" alt="soyjaking plushie front"></div>
+<div class="gallery-slide"><img src="Finished Photos/chudjakphoto2.png" alt="soyjaking plushie side"></div>
+<div class="gallery-slide"><img src="Finished Photos/chudjakphoto4.png" alt="soyjaking plushie full"></div>
+<div class="gallery-slide"><img src="Finished Photos/chudjakphoto3.png" alt="soyjaking plushie packaging"></div>
+          </div>
+          <button class="gallery-btn prev" onclick="galleryMove(-1)">&#9664;</button>
+          <button class="gallery-btn next" onclick="galleryMove(1)">&#9654;</button>
+        </div>
+        <div class="gallery-counter" id="gallery-counter"></div>
+
+        <!-- Price & Buy -->
+        <div class="buy-row">
+          <span class="price">$25.00</span>
+          <a class="buy-btn" href="#" onclick="return false;">[ SOLD OUT ]</a>
+          <span class="stock-note">+ shipping</span>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Product description -->
+        <p class="green">&gt; Turned into a marketable plushie</p>
+        <p class="green">&gt; Sells out</p>
+        <p class="green">&gt; "It's over"</p>
+        <p class="green">&gt; Restock coming soon...</p>
+        <p class="green">&gt; "We're back"</p>
+        <p class="green">&gt; Millions must buy</p>
+        <br />
+        <p style="color: var(--accent);">
+          <!-- REPLACE THIS with your product description / story -->
+          Now's your chance to own your very own chudjak chibi plush, coming in a sleek redpill capsule container included in your purchase.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- DETAILS / SPECS -->
+    <section id="details" class="board-post">
+      <div class="post-header">
+        <span class="subject">details &amp; specs</span>
+        <span class="postnum">#0002</span>
+      </div>
+      <div class="post-body">
+        <table class="specs-table">
+          <tr><td>material</td><td contenteditable="true">soft polyester plush, PP cotton filling</td></tr>
+          <tr><td>size</td><td contenteditable="true">approx. 10 inches tall</td></tr>
+          <tr><td>ships from</td><td contenteditable="true">United States</td></tr>
+          <tr><td>shipping time</td><td contenteditable="true">7-14 business days domestic</td></tr>
+          <tr><td>packaging</td><td contenteditable="true">redpill capsule, poly mailer</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="board-post">
+      <div class="post-header">
+        <span class="subject">contact &amp; support</span>
+        <span class="postnum">#0004</span>
+      </div>
+      <div class="post-body">
+        <p>
+          for order issues, questions, or anything else —<br />
+          email: <a href="mailto:support@soyjaking.com">support@soyjaking.com</a>
+        </p>
+        <br />
+        <p class="green">&gt; response time typically 1–2 business days.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────── -->
+  <footer id="site-footer">
+    &copy; 2025 soyjaking &mdash; all rights reserved &mdash;
+    <a href="mailto:support@soyjaking.com">support@soyjaking.com</a>
+  </footer>
+
+  <!-- ── GALLERY JS ──────────────────────────────────────────── -->
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll('.gallery-slide');
+    const track  = document.getElementById('gallery-slides');
+    const counter = document.getElementById('gallery-counter');
+
+    function updateCounter() {
+      counter.textContent = `${current + 1} / ${slides.length}`;
+    }
+
+    function galleryMove(dir) {
+      current = (current + dir + slides.length) % slides.length;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      updateCounter();
+    }
+
+    updateCounter();
+
+    // Swipe support for mobile
+    let touchStartX = 0;
+    const gallery = document.getElementById('gallery');
+    gallery.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    gallery.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) galleryMove(diff > 0 ? 1 : -1);
+    });
+  </script>
+
+</body>
+</html>
